@@ -1,4 +1,3 @@
-
 #################
 # Preparations #
 ###############
@@ -10,17 +9,15 @@ library(scatterplot3d)
 library(abind)
 library(ggbiplot)
 library(gridExtra)
-library(wesanderson)
-library(ggthemes)
 
 #########################
 # Import landmark data #
 #######################
 
-# general path
-path <- "H:/Dropbox/Dissertation/Dissertation chapters/Chapter 3 - Jaw closing/Landmarks/"
+#windows
+#path <- "H:/Dropbox/Dissertation/Dissertation chapters/Chapter 3 - Jaw closing/Landmarks/"
 #mac
-#path = "~/Dropbox/Dissertation/Dissertation chapters/Chapter 3 - Jaw closing/Landmarks/"
+path = "~/Dropbox/Dissertation/Dissertation chapters/Chapter 3 - Jaw closing/Landmarks/"
 
 # landmarks (2x10x10x10=60 files)
 files <- paste(path, list.files(path=path, pattern=".txt"), sep="")
@@ -178,12 +175,12 @@ all.group <- factor(c(rep("Microcebus, ground truth",10),
                       rep("Saguinus, ground truth",10),
                       rep("Saguinus, 4-point",10),
                       rep("Saguinus, 8-point",10)))
-ggbiplot(all.pca, groups= all.group, ellipse=TRUE, var.axes=FALSE, alpha=0.5, scale=1) +
+ggbiplot(all.pca, groups= all.group, ellipse=TRUE, var.axes=FALSE, alpha=0.5, scale=0) +
   labs(color="Method") +
   scale_color_manual(values=c("red4","hotpink2","gold3","blue4","dodgerblue","purple")) +
-  theme(axis.title = element_text(size=14),
-        legend.title = element_text(size=14),
-        legend.text = element_text(size=11)) 
+  theme(axis.title = element_text(size=12),
+        legend.title = element_text(size=13),
+        legend.text = element_text(size=10)) 
 
 ###############################################
 # Analysis 4: Absolute vertical displacement #
@@ -246,33 +243,6 @@ ggplot(dist, aes(Pair, Distance, fill=Method)) +
         axis.title.y=element_text(margin=margin(0,20,0,0), size=13, face=2),
         strip.text = element_text(face = 3, size=13)) +
   scale_fill_manual(values=c("red4","hotpink2","gold3","blue4","dodgerblue","purple"))
-
-##############
-# TMJ disks #
-############
-
-# manually enter data
-tmj <- data.frame(species <- c("Pongo pygmaeus","Papio anubis","Propithecus coquereli","Lepilemur mustelinus","Saimiri sciureus","Tarsius syrichta"))
-tmj$disks <- c(0.679,0.607,0.07,0.069,0.082,0.054) 
-tmj$bodymass <- c(78.32,12.929,3.99,0.777,0.745,0.117)
-tmj$Sex <- c("M", "F", "U", "M", "U", "F")
-
-# linear model
-disk.lm <- lm(disks~log(bodymass), data=tmj)
-summary(disk.lm)
-
-# scatterplot
-ggplot(tmj, aes(log(bodymass), disks, shape=Sex)) +
-  scale_shape_manual(values=c("M"="\u2642", "F"="\u2640", "U"="\u2715")) +
-  geom_point(size=5) +
-  geom_text(nudge_y=c(0.06,0.06,0.03,0.06,-0.06,0.06), size=3.5, fontface=3, label=species) +
-  xlim(-3, 5) +
-  geom_smooth(method="lm", aes(group = 1)) +
-  ylab("Disk thickness (mm)") +
-  xlab("Log species mean body mass (kg)") +
-  theme(axis.title = element_text(size=15, face=2),
-        legend.title = element_text(size=15),
-        legend.text = element_text(size=14))
 
 ########
 # END #
