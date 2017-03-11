@@ -4,6 +4,7 @@
 
 # load packages
 library(geomorph)
+library(ggplot2)
 library(plyr) # for 'mapvalues' function to create wireframe colors
 library(abind) # for reading in landmarks
 
@@ -13,7 +14,7 @@ source('~/Desktop/GitHub/Dissertation/Chapter_4/R/functions/sd.coords.R', chdir 
 source('~/Desktop/GitHub/Dissertation/Chapter_4/R/functions/plotWireframe.R', chdir = TRUE)
 
 # read landmarks
-path = "~/Desktop/GitHub/Dissertation/Chapter_4/data"
+path = "~/Desktop/GitHub/Dissertation/Chapter_4/data/"
 files <- paste(path, list.files(path=path, pattern=".pp"), sep="")
 landmarks <- NULL
 for (i in 1:length(files)) {landmarks <- abind(landmarks, read.pp(files[i]), along=3)}
@@ -39,23 +40,32 @@ mod
 # PLOTS #
 #########
 
+# distribution of coordinate standard deviations
+hist_dat <- data.frame(sds=c(sds.fas, sds.nem), 
+  sp=factor(rep(c("M. fascicularis","M. nemestrina"),each=26*3)),
+  v=rep(c(median(sds.fas),median(sds.nem)),each=26*3))
+ggplot(hist_dat, aes(sds)) +
+  geom_histogram(binwidth=0.05, boundary=0.5, color="white") +
+  facet_grid( ~ sp) + ylab("Frequency") + xlab("Standard deviation (mm)") +
+  ylim(c(0,25)) +
+  theme(axis.title.y=element_text(margin=margin(0,20,0,5), size=13, face=2),
+  axis.title.x=element_text(margin=margin(20,0,0,5), size=13, face=1),
+  strip.text.x=element_text(face="italic", size=14),
+  plot.margin=unit(c(1,1,0.5,0),"cm")) +
+  geom_vline(aes(xintercept=v), linetype=2, size=1)
+
 # 3d scatterplot
-plotAllSpecimens(landmarks, mean=T, plot.param=list(pt.cex=0.5))
+plotAllSpecimens(landmarks[,,1:16], mean=T, plot.param=list(pt.cex=0.5))
 
 # define wireframe
-wireframe <- read.csv("~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Landmarks and measurement error/Spreadsheets/wireframe.csv", header=F)
+wireframe <- read.csv("~/Desktop/GitHub/Dissertation/Chapter_4/data/wireframe.csv", header=F)
 
 # define wire colors
 wire_colors <- mapvalues(wireframe[,1], c("mandible", "face", "braincase", "zygomatic", "basicranium"), c("red", "green", "blue", "purple", "yellow"))
 
 # import landmark data
-#test <- read.pp("~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Landmarks and measurement error/Landmarks/nem_4_4.pp")
-#test <- array(test, dim=c(26,3,1))
-
-# define mean shapes for M.fas and M.nem
-
-# make side-by-side wireframe plots with legend
-#plotWireframe(test, wireframe[,2:3], link_col=wire_colors)
+test <- array(landmarks[,,1], dim=c(26,3,1))
+plotWireframe(test, wireframe[,2:3], link_col=wire_colors, bg_col="white")
 
 ########
 # END ##
