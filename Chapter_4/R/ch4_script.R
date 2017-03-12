@@ -11,7 +11,6 @@ library(abind) # for formatting landmark array
 # load custom functions
 source('~/Desktop/GitHub/Dissertation/Chapter_4/R/functions/read.pp.R', chdir = TRUE)
 source('~/Desktop/GitHub/Dissertation/Chapter_4/R/functions/sd.coords.R', chdir = TRUE)
-source('~/Desktop/GitHub/Dissertation/Chapter_4/R/functions/plotWireframe.R', chdir = TRUE)
 
 # read landmarks
 path = "~/Desktop/GitHub/Dissertation/Chapter_4/data/"
