@@ -1,35 +1,35 @@
 <!DOCTYPE PickedPoints>
 <PickedPoints>
  <DocumentData>
-  <DateTime date="2017-03-08" time="15:46:04"/>
-  <User name="nunnlab"/>
-  <DataFileName name="nem_1.ply"/>
+  <DateTime date="2017-06-30" time="15:30:22"/>
+  <User name="Randi Griffin"/>
+  <DataFileName name="Macaca_nemestrina_F_USNM-114502.ply"/>
   <templateName name=".pickPointsTemplate.pptpl"/>
  </DocumentData>
- <point name="Rhinion" x="-0.883576" y="-200.415" z="-17.907" active="1"/>
- <point name="Prosthion" x="-1.58283" y="-175.281" z="7.16569" active="1"/>
- <point name="Infradentale" x="-0.517473" y="-163.918" z="8.37343" active="1"/>
- <point name="Gnathion" x="-1.00467" y="-136.451" z="-10.9454" active="1"/>
- <point name="Canine (maxillary)" x="13.2807" y="-171.758" z="-7.89293" active="1"/>
- <point name="Canine (mandibular)" x="8.45216" y="-163.019" z="-2.56701" active="1"/>
- <point name="M2 (maxillary)" x="20.0639" y="-167.915" z="-29.8455" active="1"/>
- <point name="M2 (mandibular)" x="15.1504" y="-158.368" z="-26.578" active="1"/>
- <point name="Gonion" x="18.4862" y="-137.718" z="-59.5497" active="1"/>
- <point name="Coronion" x="29.6503" y="-179.579" z="-61.3679" active="1"/>
- <point name="Mandibular notch" x="27.8004" y="-172.718" z="-66.7407" active="1"/>
- <point name="Condylion" x="33.0145" y="-172.47" z="-74.9827" active="1"/>
- <point name="Porion" x="29.2626" y="-175.259" z="-87.8297" active="1"/>
- <point name="Zygomatic point" x="39.5068" y="-182.478" z="-63.4793" active="1"/>
- <point name="Orbit margin (lateral)" x="27.6852" y="-209.809" z="-53.5909" active="1"/>
- <point name="Orbit margin (inferior)" x="16.0186" y="-199.372" z="-38.0845" active="1"/>
- <point name="Orbit margin (medial)" x="1.40512" y="-214.346" z="-43.549" active="1"/>
- <point name="Orbit margin (superior)" x="14.944" y="-221.45" z="-50.5024" active="1"/>
- <point name="Gabella" x="-1.04321" y="-222.664" z="-47.6567" active="1"/>
- <point name="Postorbital constriction" x="24.0225" y="-211.753" z="-66.3564" active="1"/>
- <point name="Euryon" x="32.5465" y="-189.658" z="-89.092" active="1"/>
- <point name="Vertex" x="-1.31867" y="-220.204" z="-87.7897" active="1"/>
- <point name="Opisthocranium" x="-2.49207" y="-181.733" z="-125.337" active="1"/>
- <point name="Opisthion" x="-1.65365" y="-165.293" z="-102.422" active="1"/>
- <point name="Basion" x="-1.29322" y="-167.132" z="-83.7597" active="1"/>
- <point name="Floor of sella" x="-0.98652" y="-183.172" z="-74.2672" active="1"/>
+ <point x="-0.883576" z="-17.907" name="Rhinion" y="-200.415" active="1"/>
+ <point x="-1.58283" z="7.16569" name="Prosthion" y="-175.281" active="1"/>
+ <point x="-0.517473" z="8.37343" name="Infradentale" y="-163.918" active="1"/>
+ <point x="-1.00467" z="-10.9454" name="Gnathion" y="-136.451" active="1"/>
+ <point x="15.0298" z="-7.77225" name="Canine (maxillary)" y="-172.701" active="1"/>
+ <point x="8.89777" z="-2.24137" name="Canine (mandibular)" y="-163.621" active="1"/>
+ <point x="20.6475" z="-29.4963" name="M2 (maxillary)" y="-168.269" active="1"/>
+ <point x="15.3746" z="-25.9064" name="M2 (mandibular)" y="-157.891" active="1"/>
+ <point x="18.4862" z="-59.5497" name="Gonion" y="-137.718" active="1"/>
+ <point x="29.6503" z="-61.3679" name="Coronion" y="-179.579" active="1"/>
+ <point x="27.8004" z="-66.7407" name="Mandibular notch" y="-172.718" active="1"/>
+ <point x="33.0145" z="-74.9827" name="Condylion" y="-172.47" active="1"/>
+ <point x="29.2626" z="-87.8297" name="Porion" y="-175.259" active="1"/>
+ <point x="39.6468" z="-64.7" name="Zygomatic point" y="-182.29" active="1"/>
+ <point x="27.6852" z="-53.5909" name="Orbit margin (lateral)" y="-209.809" active="1"/>
+ <point x="16.0186" z="-38.0845" name="Orbit margin (inferior)" y="-199.372" active="1"/>
+ <point x="1.40512" z="-43.549" name="Orbit margin (medial)" y="-214.346" active="1"/>
+ <point x="14.944" z="-50.5024" name="Orbit margin (superior)" y="-221.45" active="1"/>
+ <point x="-1.04321" z="-47.6567" name="Glabella" y="-222.664" active="1"/>
+ <point x="24.0225" z="-66.3564" name="Postorbital constriction" y="-211.753" active="1"/>
+ <point x="32.5465" z="-89.092" name="Euryon" y="-189.658" active="1"/>
+ <point x="-1.31867" z="-87.7897" name="Vertex" y="-220.204" active="1"/>
+ <point x="-2.49207" z="-125.337" name="Opisthocranium" y="-181.733" active="1"/>
+ <point x="-1.65365" z="-102.422" name="Opisthion" y="-165.293" active="1"/>
+ <point x="-1.29322" z="-83.7597" name="Basion" y="-167.132" active="1"/>
+ <point x="-0.98652" z="-74.2672" name="Floor of sella" y="-183.172" active="1"/>
 </PickedPoints>
