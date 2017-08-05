@@ -46,7 +46,7 @@
 #' The rest of the function is identical to https://github.com/geomorphR/geomorph/blob/Stable/R/plotGMPhyloMorphoSpace.r
 #' downloaded on August 5, 2017
 #' 
-plotGMPhyloMorphoSpace<-function(phy,A,tip.labels=TRUE,node.labels=TRUE,ancStates=TRUE, xaxis=1, yaxis=2, zaxis=NULL, plot.param = list(), shadow=FALSE){
+plotGMPhyloMorphoSpace_axisflip<-function(phy,A,tip.labels=TRUE,node.labels=TRUE,ancStates=TRUE, xaxis=1, yaxis=2, zaxis=NULL, plot.param = list(), shadow=FALSE){
   if(any(is.na(A))==T){
     stop("Data matrix contains missing values. Estimate these first (see 'estimate.missing').")  }
   if (length(dim(A))==3){ 
