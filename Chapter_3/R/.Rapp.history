@@ -1,0 +1,250 @@
+install.packages("psych")
+library(psych)
+?fa
+pa <- fa(Harman74.cor$cov,4,fm="pa" ,rotate="varimax")
+parint(pa$loadings)
+print(pa$loadings)
+print(pa$loadings, sort=TRUE)
+uls <- fa(Harman74.cor$cov,4,rotate="varimax")          #unweighted least squares is minres#
+wls <- fa(Harman74.cor$cov,4,fm="wls")
+print(uls$loadings, sort=TRUE)
+?fa
+?str.split
+?strSplit
+?splitstr
+?strsplit
+install.packages("stringi")
+N <- 400#
+pop <- c(1:N)#
+#
+lower.bound <- round(x = .05 * N, digits = 0)#
+lower.bound ## Smallest possible sample size#
+#
+upper.bound <- round(x = .15 * N, digits = 0)#
+upper.bound ## Largest possible sample size#
+#
+length.ss.interval <- length(c(lower.bound:upper.bound))#
+length.ss.interval
+.05*400
+sample(x = c(lower.bound:upper.bound),#
+       size = 1,#
+       prob = c(rep(1/length.ss.interval, length.ss.interval)))
+sample(x = c(lower.bound:upper.bound),#
+       size = 1,#
+       prob = c(rep(1/length.ss.interval, length.ss.interval)))
+sample(x = c(lower.bound:upper.bound),#
+       size = 1,#
+       prob = c(rep(1/length.ss.interval, length.ss.interval)))
+sample(x = c(lower.bound:upper.bound),#
+       size = 1,#
+       prob = c(rep(1/length.ss.interval, length.ss.interval)))
+sample(x = c(lower.bound:upper.bound),#
+       size = 1,#
+       prob = c(rep(1/length.ss.interval, length.ss.interval)))
+sample(x = c(lower.bound:upper.bound),#
+       size = 1,#
+       prob = c(rep(1/length.ss.interval, length.ss.interval)))
+sample(x = c(lower.bound:upper.bound),#
+       size = 1,#
+       prob = c(rep(1/length.ss.interval, length.ss.interval)))
+sample(x = c(lower.bound:upper.bound),#
+       size = 1,#
+       prob = c(rep(1/length.ss.interval, length.ss.interval)))
+sample(x = c(lower.bound:upper.bound),#
+       size = 1,#
+       prob = c(rep(1/length.ss.interval, length.ss.interval)))
+sample(x = c(lower.bound:upper.bound),#
+       size = 1,#
+       prob = c(rep(1/length.ss.interval, length.ss.interval)))
+1/length.ss.interval
+length.ss.interval
+rep(1/length.ss.interval, length.ss.interval)
+dat <- matrix(data = NA,#
+              nrow = length(pop),#
+              ncol = n.samples + 1)
+n.samples <- 100#
+#
+dat <- matrix(data = NA,#
+              nrow = length(pop),#
+              ncol = n.samples + 1)
+dim(dat)
+dat
+dat[,1] <- pop
+dat
+sum(rep(1/length.ss.interval,#
+length.ss.interval)))
+sum(rep(1/length.ss.interval,#
+length.ss.interval))
+pop
+for(i in 2:ncol(dat)) {#
+  a.sample <- sample(x = pop,#
+                     size = sample(x = c(lower.bound:upper.bound),#
+                                   size = 1,#
+                                   prob = c(rep(1/length.ss.interval,#
+length.ss.interval))),#
+                     replace = FALSE)#
+  dat[,i] <- dat[,1] %in% a.sample#
+}
+dat
+N <- 400#
+pop <- c(1:N)#
+#
+lower.bound <- round(x = .05 * N, digits = 0)#
+lower.bound ## Smallest possible sample size#
+#
+upper.bound <- round(x = .15 * N, digits = 0)#
+upper.bound ## Largest possible sample size#
+#
+length.ss.interval <- length(c(lower.bound:upper.bound))#
+length.ss.interval ## total possible sample sizes, ranging form lower.bound#
+to upper.bound#
+sample(x = c(lower.bound:upper.bound),#
+       size = 1,#
+       prob = c(rep(1/length.ss.interval, length.ss.interval)))#
+#
+n.samples <- 100#
+#
+dat <- matrix(data = NA,#
+              nrow = length(pop),#
+              ncol = n.samples + 1)#
+#
+dat[,1] <- pop#
+#
+for(i in 2:ncol(dat)) {#
+  a.sample <- sample(x = pop,#
+                     size = sample(x = c(lower.bound:upper.bound),#
+                                   size = 1,#
+                                   prob = c(rep(1/length.ss.interval,#
+length.ss.interval))),#
+                     replace = FALSE)#
+  dat[,i] <- dat[,1] %in% a.sample#
+}#
+schnabel.comp <- data.frame(sample = 1:n.samples,#
+                            n.sampled = apply(X = dat, MARGIN = 2, FUN =#
+sum)[2:length(apply(X = dat, MARGIN = 2, FUN = sum))]#
+)#
+n.prev.sampled <- c(0, rep(NA, n.samples-1))#
+n.prev.sampled#
+#
+n.prev.sampled[2] <- sum(ifelse(test = dat[,3] == 1 & dat[,2] == 1,#
+                                yes = 1,#
+                                no = 0))#
+#
+for(i in 4:ncol(dat)) {#
+  n.prev.sampled[i-1] <- sum(ifelse(test = dat[,i] == 1 &#
+rowSums(dat[,2:(i-1)]) > 0,#
+                                    yes = 1,#
+                                    no = 0))#
+}#
+#
+schnabel.comp$n.prev.sampled <- n.prev.sampled#
+schnabel.comp$n.newly.sampled <- with(schnabel.comp,#
+                                      n.sampled - n.prev.sampled)#
+schnabel.comp$cum.sampled <- c(0,#
+cumsum(schnabel.comp$n.newly.sampled)[2:n.samples-1])#
+schnabel.comp$numerator <- with(schnabel.comp,#
+                                n.sampled * cum.sampled)#
+schnabel.comp$pop.estimate <- NA#
+#
+for(i in 1:length(schnabel.comp$pop.estimate)) {#
+  schnabel.comp$pop.estimate[i] <- sum(schnabel.comp$numerator[1:i]) /#
+sum(schnabel.comp$n.prev.sampled[1:i])#
+}#
+#
+if (!require("ggplot2")) {install.packages("ggplot2"); require("ggplot2")}#
+if (!require("scales")) {install.packages("scales"); require("scales")}#
+small.sample.dat <- schnabel.comp#
+#
+small.sample <- ggplot(data = small.sample.dat,#
+                       mapping = aes(x = sample, y = pop.estimate)) +#
+  geom_point(size = 2) +#
+  geom_line() +#
+  geom_hline(yintercept = N, col = "red", lwd = 1) +#
+  coord_cartesian(xlim = c(0:100), ylim = c(300:500)) +#
+  scale_x_continuous(breaks = pretty_breaks(11)) +#
+  scale_y_continuous(breaks = pretty_breaks(11)) +#
+  labs(x = "\nSample", y = "Population estimate\n",#
+       title = "Sample sizes are between 5% and 15%\nof the population") +#
+  theme_bw(base_size = 12) +#
+  theme(aspect.ratio = 1)
+small.sample
+?round
+ceiling(0.05*400)
+num_samp <- 100#
+lower_sampsize <- 0.05#
+upper_sampsize <- 0.15#
+pop_size1 <- 400#
+pop_size2 <- 800#
+pop_size3 <- 300
+pop_size=400
+lower <- ceiling(lower_sampsize*pop_size)#
+	upper <- floor(upper_sampsize*pop_size)
+lower
+upper
+# empty matrix#
+	mat <- matrix(0, pop_size, num_samp)#
+	# min and max sample size#
+	min <- ceiling(lower_sampsize*pop_size)#
+	max <- floor(upper_sampsize*pop_size)#
+	# vector of sample sizes#
+	samp_sizes <- sample(min:max, num_samp)
+min:max
+?sample
+samp_sizes <- sample(min:max, size=num_samp)
+samp_sizes <- sample(min:max, size=num_samp, replace=TRUE)
+samp_sizes
+?apply
+# draw the samples and fill in the matrix#
+	for (i in 1:num_samp) {#
+		mat[sample(1:pop_size, n=samp_sizes[i]),i] <- 1#
+	}
+?sample
+sample(1:pop_size, n=samp_sizes[i])
+sample(1:pop_size, samp_sizes[i])
+i
+sample(1:pop_size, samp_sizes[2])
+sample(1:pop_size, samp_sizes[100])
+?sample
+# vector of random sample sizes between min and max#
+	samp_sizes <- sample(min:max, num_samp, replace=TRUE)#
+	# draw the samples and fill in the matrix#
+	for (i in 1:num_samp) {#
+		mat[sample(1:pop_size, samp_sizes[i]),i] <- 1#
+	}
+mat
+colSums(mat)
+samp_sizes
+# do the sampling from the 3 populations#
+mat1 <- mark_recapture(num_samp=num_samp, pop_size=pop_size1, lower_sampsize=lower_sampsize, upper_sampsize= upper_sampsize)#
+mat2 <- mark_recapture(num_samp=num_samp, pop_size=pop_size2, lower_sampsize=lower_sampsize, upper_sampsize= upper_sampsize)#
+mat3 <- mark_recapture(num_samp=num_samp, pop_size=pop_size3, lower_sampsize=lower_sampsize, upper_sampsize= upper_sampsize)
+# define variables#
+num_samp <- 100#
+lower_sampsize <- 0.05#
+upper_sampsize <- 0.15#
+pop_size1 <- 400#
+pop_size2 <- 800#
+pop_size3 <- 300#
+#
+# define sampling function that outputs matrix#
+mark_recapture <- function (num_samp, pop_size, lower_sampsize, upper_sampsize) {#
+	# empty matrix#
+	mat <- matrix(0, pop_size, num_samp)#
+	# min and max sample size#
+	min <- ceiling(lower_sampsize*pop_size)#
+	max <- floor(upper_sampsize*pop_size)#
+	# vector of random sample sizes between min and max#
+	samp_sizes <- sample(min:max, num_samp, replace=TRUE)#
+	# draw the samples and fill in the matrix#
+	for (i in 1:num_samp) {mat[sample(1:pop_size, samp_sizes[i]),i] <- 1}#
+	# return matrix#
+	return(mat)#
+}#
+#
+# do the sampling from the 3 populations#
+mat1 <- mark_recapture(num_samp=num_samp, pop_size=pop_size1, lower_sampsize=lower_sampsize, upper_sampsize= upper_sampsize)#
+mat2 <- mark_recapture(num_samp=num_samp, pop_size=pop_size2, lower_sampsize=lower_sampsize, upper_sampsize= upper_sampsize)#
+mat3 <- mark_recapture(num_samp=num_samp, pop_size=pop_size3, lower_sampsize=lower_sampsize, upper_sampsize= upper_sampsize)
+mat1
+mat2
+mat3
