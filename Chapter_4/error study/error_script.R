@@ -13,7 +13,7 @@ source('~/Desktop/GitHub/Dissertation/Chapter_4/R/functions/read.pp.R', chdir = 
 source('~/Desktop/GitHub/Dissertation/Chapter_4/R/functions/sd.coords.R', chdir = TRUE)
 
 # read landmarks
-path = "~/Desktop/GitHub/Dissertation/Chapter_4/data/"
+path = "~/Desktop/GitHub/Dissertation/Chapter_4/error_study/error_data/"
 files <- paste(path, list.files(path=path, pattern=".pp"), sep="")
 landmarks <- NULL
 for (i in 1:length(files)) {landmarks <- abind(landmarks, read.pp(files[i]), along=3)}
