@@ -46,7 +46,7 @@
 #' The rest of the function is identical to https://github.com/geomorphR/geomorph/blob/Stable/R/plotGMPhyloMorphoSpace.r
 #' downloaded on August 5, 2017
 #' 
-plotGMPhyloMorphoSpace_axisflip<-function(phy,A,tip.labels=TRUE,node.labels=TRUE,ancStates=TRUE, xaxis=1, yaxis=2, zaxis=NULL, plot.param = list(), shadow=FALSE){
+plotGMPhyloMorphoSpace_axisflip<-function(phy,A,tip.labels=TRUE,tip.text=NULL,node.labels=TRUE,ancStates=TRUE, xaxis=1, yaxis=2, zaxis=NULL, plot.param = list(), shadow=FALSE){
   if(any(is.na(A))==T){
     stop("Data matrix contains missing values. Estimate these first (see 'estimate.missing').")  }
   if (length(dim(A))==3){ 
@@ -112,7 +112,8 @@ plotGMPhyloMorphoSpace_axisflip<-function(phy,A,tip.labels=TRUE,node.labels=TRUE
     points(pcdata[1:N,xaxis], pcdata[1:N,yaxis],pch=p.p$t.pch, bg=p.p$t.bg, cex=p.p$t.cex)
     points(pcdata[(N+1):nrow(pcdata),xaxis], pcdata[(N+1):nrow(pcdata),yaxis],pch=p.p$n.pch, bg=p.p$n.bg, cex=p.p$n.cex)
     if(tip.labels==TRUE){
-      text(pcdata[1:N,xaxis],pcdata[1:N,yaxis],rownames(pcdata)[1:N],
+      if(is.null(tip.text)) tip.text <- rownames(pcdata)[1:N]
+      text(pcdata[1:N,xaxis],pcdata[1:N,yaxis],tip.text,
            col=p.p$txt.col,cex=p.p$txt.cex,adj=p.p$txt.adj)}
     if(node.labels==TRUE){
       text(pcdata[(N + 1):nrow(pcdata),xaxis],pcdata[(N + 1):nrow(pcdata),yaxis],rownames(pcdata)[(N + 1):nrow(pcdata)],

@@ -23,8 +23,13 @@ for (i in 1:length(files)) {landmarks <- abind(landmarks, read.pp(files[i]), alo
 ############
 
 # compute standard deviations for each landmark/dimension 
-sds.fas <- sd.coords(landmarks[,,1:16])
-sds.nem <- sd.coords(landmarks[,,17:32])
+sds.fas <- data.frame(round(sd.coords(landmarks[,,1:16]),3))
+sds.nem <- data.frame(round(sd.coords(landmarks[,,17:32]),3))
+sds.fas$ave <- round(sqrt(rowSums(sds.fas^2)/3),3)
+sds.nem$ave <- round(sqrt(rowSums(sds.nem^2)/3),3)
+sds <- cbind(sds.fas, sds.nem)
+names(sds) <- c("fas.x","fas.y","fas.z","fas.average","nem.x","nem.y","nem.z","nem.average")
+sds
 
 # nested ANOVA
 alignment <- factor(rep(rep(1:4, each=4), 2))
@@ -59,6 +64,7 @@ bgplot3d({plot.new()
 for (i in 1:nrow(wireframe)) {
   segments3d(rbind(mean.nem[wireframe[i,2],], mean.nem[wireframe[i,3],]), lwd = 2, col=wireframe[i,4])
 }
+snapshot3d("~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Landmarks and measurement error/Figures/Figure 4.2 Wireframes.png", fmt="png")
 
 # histograms showing distribution of coordinate standard deviations
 hist_dat <- data.frame(sds=c(sds.fas, sds.nem), 
