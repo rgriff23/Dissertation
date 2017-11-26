@@ -13,9 +13,9 @@ library("ggtree")
 setwd("~/Desktop/GitHub/Dissertation/Chapter_4/")
 
 # load custom functions
-source("../Chapter_4/R/functions/read.pp.R", chdir = TRUE)
-source("R/functions/plot_wireframes.R", chdir = TRUE)
-source("R/functions/plotGMPhyloMorphoSpace_axisflip.R", chdir = TRUE)
+source("R/functions/read.pp.R")
+source("R/functions/plot_wireframes.R")
+source("R/functions/plotGMPhyloMorphoSpace_axisflip.R")
 
 # read & tidy data
 data <- read.csv("data/primate_data.csv") %>%
