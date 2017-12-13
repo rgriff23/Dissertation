@@ -1,5 +1,5 @@
 # Goswami modularity test
-Goswami_modularity <- function (lcm, k=6) {
+Goswami_modularity_test <- function (lcm, k=6) {
   
   # make distance matrix from lcm
   d <- matrix(0,nrow(lcm),nrow(lcm))
@@ -17,14 +17,22 @@ Goswami_modularity <- function (lcm, k=6) {
   clust <- res$cluster
   sizes <- table(res$cluster)
   
-  # divide matrix into within vs between
+  # create correlation matrix (RV coefficient) from lcm
+  cm <- matrix(1, nrow(lcm), nrow(lcm))
+  for (i in 2:nrow(cm)) {
+    for (j in 1:(i-1)) {
+      cm[i,j] <- cm[j,i] <- lcm[i,j]/sqrt(lcm[i,i]*lcm[j,j])
+    }
+  }
+  
+  # divide correlation matrix into within vs between
   within <- c()
   between <- c()
-  for (i in 2:nrow(lcm)) {
+  for (i in 2:nrow(cm)) {
     for (j in 1:(i-1)) {
       if (clust[i] == clust[j]) {
-        within <- c(within, lcm[i,j])
-      } else between <- c(between, lcm[i,j])
+        within <- c(within, cm[i,j])
+      } else between <- c(between, cm[i,j])
     }
   }
 
