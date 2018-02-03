@@ -5,4 +5,4 @@
 * Chapter 4: Macroevolutionary correlates of primate skull shape
 * Chapter 5: Macroevolutionary integration and modularity
 
-Landmark data are included in this repo. The 3D surface files from which landmarks were collected will be made available elsewhere (*link goes here*). :)
+Landmark data are included in this repo. The 3D surface files from which landmarks were collected will be made available elsewhere (*link goes here*). 
