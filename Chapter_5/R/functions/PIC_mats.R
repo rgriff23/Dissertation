@@ -1,28 +1,44 @@
-# This function accepts GPA aligned 3D landmark coordinates [p x 3 x n] 
-# and returns a list with the following elements:
-  ## (1) phylogenetically independent contrasts (pics) of landmark coordinates
-  ## (2) landmark covariance matrix (lcm) derived from pics
-  ## (3) Euclidean distance matrix (dmat) derived from lcm
-  ## (4) data matrix derived from multidimensional scaling of dmat
+# This function accepts the following arguments:
+  ## (1) coords - GPA aligned 3D landmark coordinates [p x 3 x n] 
+  ## (2) phy - on object of class 'phylo' (n tips)
+  ## (3) controlVars - a matrix with c control variables in columns [n x c]
+  ## (4) goswami - logical, whether to use goswami's covariance equation
+# Names of the n-dimension of coords and controlVars should match tip labels in the phylogeny
+# The function returns a list with the following elements:
+  ## (1) phylogenetically independent contrasts (pics) of landmark coordinates [n-1 x p*3]
+  ## (2) landmark covariance matrix (lcm) derived from pics [p x p]
+  ## (3) Euclidean distance matrix (dmat) derived from lcm 
+  ## (4) data matrix derived from multidimensional scaling of dmat [p x ?]
 # The 'ape' package must be loaded 
 require("ape")
 
 # function to compute PIC-corrected landmark covariance matrix and distance matrix
-PIC_mats <- function (coords, phy, allometry=NULL, goswami=FALSE) {
+PIC_mats <- function (coords, phy, controlVars=NULL, goswami=FALSE, landmark_names=NULL) {
+  
+  # if not already 2d, make 2d
+  if (length(dim(coords)) == 3) {
+    coords2d <- two.d.array(coords)
+    landmark_names <- dimnames(coords)[[1]]
+    p <- dim(coords)[1]
+  } 
+  else {
+    coords2d <- coords
+    if (is.null(landmark_names)) stop("Must supply landmark_names argument for 2D matrix")
+    p <- dim(coords)[2]/3
+  }
   
   # compute PICs for landmark coordinates - a [p x 3 x n-1] array 
-  coords2d <- two.d.array(coords)
   pics <- apply(coords2d, 2, function(x) pic(x, phy=phy))
   
-  # control for allometry if allometry != NULL
-  if(!is.null(allometry)) {
-    allometry_pics <- pic(allometry, phy=phy)
-    pics <- apply(pics, 2, function(x) lm(x~allometry_pics)$residuals)
+  # control for variables if controlVars != NULL
+  if(!is.null(controlVars)) {
+    control_pics <- apply(controlVars, 2, function(x) pic(x, phy=phy))
+    pics <- apply(pics, 2, function(x) lm(x~control_pics)$residuals)
   }
   
   # compute landmark covariance matrix from pics - a [p x p] matrix
-  lcm <- matrix(0,dim(coords)[1],dim(coords)[1])
-  for (i in 1:dim(coords)[1]) {
+  lcm <- matrix(0,p,p)
+  for (i in 1:p) {
     for (j in 1:i) {
       x <- pics[,(3*i-2):(3*i)]
       y <- pics[,(3*j-2):(3*j)]
@@ -34,7 +50,7 @@ PIC_mats <- function (coords, phy, allometry=NULL, goswami=FALSE) {
       } else lcm[i,j] <- lcm[j,i] <- sum(x*y) # computes goswami-style cov
     }
   }
-  dimnames(lcm) <- list(dimnames(coords)[[1]], dimnames(coords)[[1]])
+  dimnames(lcm) <- list(landmark_names, landmark_names)
 
   # make distance matrix from lcm
   d <- matrix(0,nrow(lcm),nrow(lcm))
@@ -51,6 +67,6 @@ PIC_mats <- function (coords, phy, allometry=NULL, goswami=FALSE) {
   mds_dat <- suppressWarnings(cmdscale(d, k=(nrow(lcm)-1)))
   mds_dat <- mds_dat[,1:ncol(mds_dat)]
   
-  # return landmark covariance matrix
+  # return matrices
   return(list(pics=pics, lcm=lcm, dmat=d, mds=mds_dat))
 }

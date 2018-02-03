@@ -176,9 +176,9 @@ multi.folin.m <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Gouging + No
 multi.gouge.m <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Folivore + Nocturnal + Gouging, phy=phy, data=gdf.m) # p = 0.676
 multi.di.m <- procD.pgls(coords ~ log(Csize) + Gouging + Folivore + Nocturnal + DimorphismIndex, phy=phy, data=gdf.m) # p = 0.001 **
 
-##########################################
-# NON-PHYLOGENETIC ANALYSIS FOR APPENDIX #
-##########################################
+##############################################
+# NON-PHYLOGENETIC ANALYSIS FOR APPENDIX ??? #
+##############################################
 
 # single variables: females
 procD.lm(coords ~ log(Csize) + Nocturnal, data=gdf.f) # 0.001 **
@@ -273,11 +273,12 @@ fig + theme(legend.position=c(0.15,0.85), legend.text=element_text(size=13))
 
 # phylomorphospace
 # maybe also add fuctionality to modify the tip labels
-layout(matrix(1:2, 1, 2))
-plotGMPhyloMorphoSpace_axisflip(tree.f, gpa.f$coords, tip.text=gsub("_.*","",tree.f$tip.label), node.labels=F, plot.param=list(t.cex=0.3, n.cex=0.3, lwd=0.3, txt.cex=0.7))
-mtext("Females", line=1, cex=2)
-plotGMPhyloMorphoSpace_axisflip(tree.m, gpa.m$coords, tip.text=gsub("_.*","",tree.m$tip.label), node.labels=F, yaxis=-2, plot.param=list(t.cex=0.3, n.cex=0.3, lwd=0.3, txt.cex=0.7))
-mtext("Males", line=1, cex=2)
+quartz()
+layout(matrix(1:2, 2, 1))
+plotGMPhyloMorphoSpace_axisflip(tree.f, gpa.f$coords, tip.text=gsub("_.*","",tree.f$tip.label), node.labels=F, plot.param=list(t.cex=0.3, n.cex=0.3, lwd=0.3, txt.cex=0.8))
+mtext("Females", line=1, cex=1.5)
+plotGMPhyloMorphoSpace_axisflip(tree.m, gpa.m$coords, tip.text=gsub("_.*","",tree.m$tip.label), node.labels=F, yaxis=-2, plot.param=list(t.cex=0.3, n.cex=0.3, lwd=0.3, txt.cex=0.8))
+mtext("Males", line=1, cex=1.5)
 
 ##############
 # WIREFRAMES #
