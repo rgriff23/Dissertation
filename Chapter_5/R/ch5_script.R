@@ -12,27 +12,24 @@ library("cluster")
 library("factoextra")
 library("gridExtra")
 
-# set working directory
-setwd("~/Desktop/GitHub/Dissertation/Chapter_5/")
-
 # load custom functions
-source("../Chapter_4/R/functions/read.pp.R")
-source("../Chapter_4/R/functions/plot_wireframes.R")
-source("R/functions/PIC_mats.R")
-source("R/functions/Goswami_modularity_test.R")
+source("Chapter_4/R/functions/read.pp.R")
+source("Chapter_4/R/functions/plot_wireframes.R")
+source("Chapter_5/R/functions/PIC_mats.R")
+source("Chapter_5/R/functions/Goswami_modularity_test.R")
 
 # read & tidy data
-data <- read.csv("../Chapter_4/data/primate_data.csv") %>%
+data <- read.csv("Chapter_4/data/primate_data.csv") %>%
   mutate(id = paste(Genus, Species, Sex, MuseumID, sep="_"), 
          genus_species = paste(Genus, Species, sep="_")) %>%
   select(Superfamily, Sex, SexDat, DimorphismIndex, id, genus_species) %>%
   arrange(id)
 
 # read phylogeny
-tree <- read.nexus("../Chapter_2/data/tree.nex")
+tree <- read.nexus("Chapter_2/data/tree.nex")
 
 # read landmarks & add dimnames
-path = "../Chapter_4/data/"
+path = "Chapter_4/data/"
 files <- paste(path, list.files(path=path, pattern=".pp"), sep="")
 landmarks <- NULL
 for (i in 1:length(files)) {landmarks <- abind(landmarks, read.pp(files[i]), along=3)}
@@ -91,9 +88,9 @@ cvar.streps.m <- matrix(c(log(gpa.streps.m$Csize), streps.m$DimorphismIndex), nc
 cvar.haps.f <- matrix(c(log(gpa.haps.f$Csize), haps.f$DimorphismIndex), ncol=2)
 cvar.haps.m <- matrix(c(log(gpa.haps.m$Csize), haps.m$DimorphismIndex), ncol=2)
 
-######################################################################################################
-# COMPUTE PIC-BASED LANDMARK VCV MATRICES, EUCLIDEAN DISTANCE MATRICES, and MULTIDIMENSIONAL SCALING #
-######################################################################################################
+####################################################################################################
+# COMPUTE PIC-BASED LANDMARK VCV MATRICES, EUCLIDEAN DISTANCE MATRICES, & MULTIDIMENSIONAL SCALING #
+####################################################################################################
 
 # no control variables 
 u.primates.f <- PIC_mats(gpa.primates.f$coords, tree.primates.f)
@@ -111,7 +108,7 @@ c.streps.m <- PIC_mats(gpa.streps.m$coords, tree.streps.m, controlVars=cvar.stre
 c.haps.f <- PIC_mats(gpa.haps.f$coords, tree.haps.f, controlVars=cvar.haps.f)
 c.haps.m <- PIC_mats(gpa.haps.m$coords, tree.haps.m, controlVars=cvar.haps.m)
 
-# Goswami approach
+# Goswami's method
 g.primates.f <- PIC_mats(gpa2.primates.f, tree.primates.f, goswami=TRUE, landmark_names=dimnames(landmarks)[[1]])
 g.primates.m <- PIC_mats(gpa2.primates.m, tree.primates.m, goswami=TRUE, landmark_names=dimnames(landmarks)[[1]])
 g.streps.f <- PIC_mats(gpa2.streps.f, tree.streps.f, goswami=TRUE, landmark_names=dimnames(landmarks)[[1]])
@@ -139,7 +136,7 @@ res.c.streps.f <- hcut(c.streps.f$dmat, k=k)
 res.c.streps.m <- hcut(c.streps.m$dmat, k=k)
 res.c.haps.f <- hcut(c.haps.f$dmat, k=k)
 res.c.haps.m <- hcut(c.haps.m$dmat, k=k)
-# Goswami covariance, PPA
+# Goswami's method
 res.g.primates.f <- hcut(g.primates.f$dmat, k=k)
 res.g.primates.m <- hcut(g.primates.m$dmat, k=k)
 res.g.streps.f <- hcut(g.streps.f$dmat, k=k)
@@ -147,11 +144,11 @@ res.g.streps.m <- hcut(g.streps.m$dmat, k=k)
 res.g.haps.f <- hcut(g.haps.f$dmat, k=k)
 res.g.haps.m <- hcut(g.haps.m$dmat, k=k)
 
-# Dendrograms
+# dendrograms
 lab_adj <- 1 # smaller -> more room for labels
 cex <- 0.6
 k_colors <- NULL
-# Uncorrected data
+# uncorrected data
 d1.1 <- fviz_dend(res.u.primates.f, k_colors=k_colors, labels_track_height=max(res.u.primates.f$height)/lab_adj, horiz=TRUE, cex=cex, main="Primate females")
 d1.2 <- fviz_dend(res.u.primates.m, k_colors=k_colors, labels_track_height=max(res.u.primates.m$height)/lab_adj, horiz=TRUE, cex=cex, main="Primate males")
 d1.3 <- fviz_dend(res.u.streps.f, k_colors=k_colors, labels_track_height=max(res.u.streps.f$height)/lab_adj, horiz=TRUE, cex=cex, main="Strepsirrhine females")
@@ -159,7 +156,7 @@ d1.4 <- fviz_dend(res.u.streps.m, k_colors=k_colors, labels_track_height=max(res
 d1.5 <- fviz_dend(res.u.haps.f, k_colors=k_colors, labels_track_height=max(res.u.haps.f$height)/lab_adj, horiz=TRUE, cex=cex, main="Haplorhine females")
 d1.6 <- fviz_dend(res.u.haps.m, k_colors=k_colors, labels_track_height=max(res.u.haps.m$height)/lab_adj, horiz=TRUE, cex=cex, main="Haplorhine males")
 grid.arrange(d1.1, d1.2, d1.3, d1.4, d1.5, d1.6, ncol=3, nrow=2, as.table=FALSE)
-# Corrected data
+# corrected data
 d2.1 <- fviz_dend(res.c.primates.f, k_colors=k_colors, labels_track_height=max(res.c.primates.f$height)/lab_adj, horiz=TRUE, cex=cex, main="Primate females")
 d2.2 <- fviz_dend(res.c.primates.m, k_colors=k_colors, labels_track_height=max(res.c.primates.m$height)/lab_adj, horiz=TRUE, cex=cex, main="Primate males")
 d2.3 <- fviz_dend(res.c.streps.f, k_colors=k_colors, labels_track_height=max(res.c.streps.f$height)/lab_adj, horiz=TRUE, cex=cex, main="Strepsirrhine females")
@@ -167,7 +164,7 @@ d2.4 <- fviz_dend(res.c.streps.m, k_colors=k_colors, labels_track_height=max(res
 d2.5 <- fviz_dend(res.c.haps.f, k_colors=k_colors, labels_track_height=max(res.c.haps.f$height)/lab_adj, horiz=TRUE, cex=cex, main="Haplorhine females")
 d2.6 <- fviz_dend(res.c.haps.m, k_colors=k_colors, labels_track_height=max(res.c.haps.m$height)/lab_adj, horiz=TRUE, cex=cex, main="Haplorhine males")
 grid.arrange(d2.1, d2.2, d2.3, d2.4, d2.5, d2.6, ncol=3, nrow=2, as.table=FALSE)
-# Goswami's methods
+# Goswami's method
 d3.1 <- fviz_dend(res.g.primates.f, k_colors=k_colors, labels_track_height=max(res.g.primates.f$height)/lab_adj, horiz=TRUE, cex=cex, main="Primate females")
 d3.2 <- fviz_dend(res.g.primates.m, k_colors=k_colors, labels_track_height=max(res.g.primates.m$height)/lab_adj, horiz=TRUE, cex=cex, main="Primate males")
 d3.3 <- fviz_dend(res.g.streps.f, k_colors=k_colors, labels_track_height=max(res.g.streps.f$height)/lab_adj, horiz=TRUE, cex=cex, main="Strepsirrhine females")
@@ -176,7 +173,7 @@ d3.5 <- fviz_dend(res.g.haps.f, k_colors=k_colors, labels_track_height=max(res.g
 d3.6 <- fviz_dend(res.g.haps.m, k_colors=k_colors, labels_track_height=max(res.g.haps.m$height)/lab_adj, horiz=TRUE, cex=cex, main="Haplorhine males")
 grid.arrange(d3.1, d3.2, d3.3, d3.4, d3.5, d3.6, ncol=3, nrow=2, as.table=FALSE)
 
-# Optimum number of modules based on the gap statistic
+# optimum number of modules based on the gap statistic
 K.max <- 10
 # no control variables
 with(clusGap(u.primates.f$mds, hcut, K.max), maxSE(Tab[,"gap"],Tab[,"SE.sim"])) # 1

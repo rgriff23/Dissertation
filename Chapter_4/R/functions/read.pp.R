@@ -1,5 +1,5 @@
 # function to read in pp files exported from Meshlab's PickPoints module
-# round=2 rounds landmarks to 2 decimal places
+# round = 2 rounds landmarks to 2 decimal places
 read.pp <- function (file, round=2) {
 	file <- readLines(file)
 	lines <- file[grep("point", file)]

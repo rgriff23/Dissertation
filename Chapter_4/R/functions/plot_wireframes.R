@@ -1,6 +1,6 @@
+# plot wireframe from landmark coordinate matrix
+# A is an n x 3 matrix of landmark coordinates
 # W is a w x 2 matrix with each row representing the start and end points of a wire
-
-# plot wireframe from an n x 3 matrix A and a W matrix
 plot.coords <- function(A, W, points.col="black", points.cex=1, lines.col="black", lines.wd=2, bg.col=NULL, 
                         main=NULL, main.line=2, main.cex=2, legend=NULL, legend.pos="topright", legend.title="", 
                         legend.col=NULL, legend.cex=1.2, legend.lwd=2, legend.bty="n", params=NULL, add=FALSE) {

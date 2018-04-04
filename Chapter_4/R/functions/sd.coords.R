@@ -1,5 +1,4 @@
-# takes coordinate array and returns standard deviation for each coordinate
-# assumes 3D data
+# takes 3D coordinate array and returns standard deviation for each coordinate
 sd.coords <- function(coords) {
 	sds <- matrix(NA,0,3)
 	for (l in 1:dim(coords)[1]) {

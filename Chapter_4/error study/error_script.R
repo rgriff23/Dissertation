@@ -3,17 +3,17 @@
 ################
 
 # load packages
-library(geomorph)
-library(ggplot2) 
-library(plyr) # for 'mapvalues' function
-library(abind) # for formatting landmark array
+library("geomorph")
+library("ggplot2") 
+library("plyr")
+library("abind")
 
 # load custom functions
-source('~/Desktop/GitHub/Dissertation/Chapter_4/R/functions/read.pp.R', chdir = TRUE)
-source('~/Desktop/GitHub/Dissertation/Chapter_4/R/functions/sd.coords.R', chdir = TRUE)
+source("Chapter_4/R/functions/read.pp.R", chdir = TRUE)
+source("Chapter_4/R/functions/sd.coords.R", chdir = TRUE)
 
-# read landmarks
-path = "~/Desktop/GitHub/Dissertation/Chapter_4/error_study/error_data/"
+# read landmark data
+path = "Chapter_4/error_study/error_data/"
 files <- paste(path, list.files(path=path, pattern=".pp"), sep="")
 landmarks <- NULL
 for (i in 1:length(files)) {landmarks <- abind(landmarks, read.pp(files[i]), along=3)}
@@ -64,7 +64,6 @@ bgplot3d({plot.new()
 for (i in 1:nrow(wireframe)) {
   segments3d(rbind(mean.nem[wireframe[i,2],], mean.nem[wireframe[i,3],]), lwd = 2, col=wireframe[i,4])
 }
-snapshot3d("~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Landmarks and measurement error/Figures/Figure 4.2 Wireframes.png", fmt="png")
 
 # histograms showing distribution of coordinate standard deviations
 hist_dat <- data.frame(sds=c(sds.fas, sds.nem), 
@@ -83,7 +82,3 @@ ggplot(hist_dat, aes(sds)) +
 ########
 # END ##
 ########
-
-
-
-

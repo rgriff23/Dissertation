@@ -3,6 +3,7 @@
   ## (2) phy - on object of class 'phylo' (n tips)
   ## (3) controlVars - a matrix with c control variables in columns [n x c]
   ## (4) goswami - logical, whether to use goswami's covariance equation
+  ## (5) landmark_names - required for 2D matrix
 # Names of the n-dimension of coords and controlVars should match tip labels in the phylogeny
 # The function returns a list with the following elements:
   ## (1) phylogenetically independent contrasts (pics) of landmark coordinates [n-1 x p*3]

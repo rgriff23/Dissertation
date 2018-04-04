@@ -9,27 +9,24 @@ library("tidyverse")
 library("abind") 
 library("ggtree")
 
-# set working directory
-setwd("~/Desktop/GitHub/Dissertation/Chapter_4/")
-
 # load custom functions
-source("R/functions/read.pp.R")
-source("R/functions/plot_wireframes.R")
-source("R/functions/plotGMPhyloMorphoSpace_axisflip.R")
+source("Chapter_4/R/functions/read.pp.R")
+source("Chapter_4/R/functions/plot_wireframes.R")
+source("Chapter_4/R/functions/plotGMPhyloMorphoSpace_axisflip.R")
 
 # read & tidy data
-data <- read.csv("data/primate_data.csv") %>%
+data <- read.csv("Chapter_4/data/primate_data.csv") %>%
   mutate(Folivore = ifelse(Diet %in% c("Folivore", "Frug-Fol"), 1, 0), 
          id = paste(Genus, Species, Sex, MuseumID, sep="_"), 
          genus_species = paste(Genus, Species, sep="_")) %>%
-  select(1:14, Folivore, id, genus_species) %>%
+  select(1:15, Folivore, id, genus_species) %>%
   arrange(id)
 
 # read phylogeny
-tree <- read.nexus("../Chapter_2/data/tree.nex")
+tree <- read.nexus("Chapter_2/data/tree.nex")
 
 # read landmarks & add dimnames
-path = "data/"
+path = "Chapter_4/data/"
 files <- paste(path, list.files(path=path, pattern=".pp"), sep="")
 landmarks <- NULL
 for (i in 1:length(files)) {landmarks <- abind(landmarks, read.pp(files[i]), along=3)}
@@ -71,6 +68,7 @@ gdf.f <- geomorph.data.frame(gpa.f, phy=tree.f,
                              DimorphismIndex=data.f$DimorphismIndex,
                              Nocturnal=data.f$Nocturnal,
                              Gouging=data.f$Gouging,
+                             Gouging2=data.f$Gouging2,
                              Folivore=data.f$Folivore)
 gdf.m <- geomorph.data.frame(gpa.m, phy=tree.m, 
                              PhysicalAlignment=data.m$PhysicalAlignment,
@@ -78,6 +76,7 @@ gdf.m <- geomorph.data.frame(gpa.m, phy=tree.m,
                              DimorphismIndex=data.m$DimorphismIndex,
                              Nocturnal=data.m$Nocturnal,
                              Gouging=data.m$Gouging,
+                             Gouging2=data.m$Gouging2,
                              Folivore=data.m$Folivore)
 
 ##############################
@@ -92,17 +91,17 @@ procD.pgls(coords ~ PhysicalAlignment, phy=phy, data=gdf.m) # p = 0.977
 # PHYLOGENETIC SIGNAL #
 #######################
 
-# Multivariate Blomberg's K
+# multivariate Blomberg's K
 physignal(landmarks.f, tree.f) # K = 0.47, p = 0.003
 physignal(landmarks.m, tree.m) # K = 0.511, p = 0.003
 
-# After controlling for centroid size
+# after controlling for centroid size
 single.csize.f <- procD.pgls(coords ~ log(Csize), phy=phy, data=gdf.f) # 0.018 *
 single.csize.m <- procD.pgls(coords ~ log(Csize), phy=phy, data=gdf.m) # 0.002 **
 physignal(single.csize.f$pgls.residuals, tree.f) # K = 0.43, p = 0.001
 physignal(single.csize.m$pgls.residuals, tree.m) # K = 0.41, p = 0.001
 
-# After controlling for all predictors
+# after controlling for all predictors
 multi.f <- procD.pgls(coords ~  Gouging + Folivore + Nocturnal + DimorphismIndex + log(Csize), phy=phy, data=gdf.f) # p = 0.026 * **
 multi.m <-procD.pgls(coords ~  Gouging + Folivore + Nocturnal + DimorphismIndex+ log(Csize), phy=phy, data=gdf.m) # p = 0.089 *
 physignal(multi.f$pgls.residuals, tree.f) # K = 0.33, p = 0.001
@@ -116,7 +115,8 @@ physignal(multi.m$pgls.residuals, tree.m) # K = 0.34, p = 0.001
 procD.pgls(coords ~ log(Csize) + DimorphismIndex*Nocturnal, phy=phy, data=gdf.f) # p = 0.467
 procD.pgls(coords ~ log(Csize) + DimorphismIndex*Folivore, phy=phy, data=gdf.f) # p = 0.413
 procD.pgls(coords ~ log(Csize) + DimorphismIndex*Gouging, phy=phy, data=gdf.f) # p = 0.653
-#procD.pgls(coords ~ log(Csize) + Gouging*Folivore, phy=phy, data=gdf.f) # fails
+procD.pgls(coords ~ log(Csize) + Gouging*Folivore, phy=phy, data=gdf.f) # fails
+procD.pgls(coords ~ log(Csize) + Gouging2*Folivore, phy=phy, data=gdf.f) # fails
 procD.pgls(coords ~ log(Csize) + Gouging*Nocturnal, phy=phy, data=gdf.f) # p = 0.581
 procD.pgls(coords ~ log(Csize) + Folivore*Nocturnal, phy=phy, data=gdf.f) # p = 0.131
 
@@ -124,42 +124,27 @@ procD.pgls(coords ~ log(Csize) + Folivore*Nocturnal, phy=phy, data=gdf.f) # p = 
 procD.pgls(coords ~ log(Csize) + DimorphismIndex*Nocturnal, phy=phy, data=gdf.m) # p = 0.322
 procD.pgls(coords ~ log(Csize) + DimorphismIndex*Folivore, phy=phy, data=gdf.m) # p = 0.814
 procD.pgls(coords ~ log(Csize) + DimorphismIndex*Gouging, phy=phy, data=gdf.m) # p = 0.705
-#procD.pgls(coords ~ log(Csize) + Gouging*Folivore, phy=phy, data=gdf.m) # fails
+procD.pgls(coords ~ log(Csize) + Gouging*Folivore, phy=phy, data=gdf.m) # fails
+procD.pgls(coords ~ log(Csize) + Gouging2*Folivore, phy=phy, data=gdf.m) # fails
 procD.pgls(coords ~ log(Csize) + Gouging*Nocturnal, phy=phy, data=gdf.m) # p = 0.864
 procD.pgls(coords ~ log(Csize) + Folivore*Nocturnal, phy=phy, data=gdf.m) # p = 0.437
 
-##############################
-# VARIANCE INFLATION FACTORS #
-##############################
-
-# females
-1/(1 - summary(lm(log(Csize) ~ DimorphismIndex + Gouging + Folivore + Nocturnal, data=data.f))$r.squared) # 1.84
-1/(1 - summary(lm(DimorphismIndex ~ log(Csize) + Gouging + Folivore + Nocturnal, data=data.f))$r.squared) # 1.48
-1/(1 - summary(lm(Gouging ~ log(Csize) + DimorphismIndex + Folivore + Nocturnal, data=data.f))$r.squared) # 1.08
-1/(1 - summary(lm(Folivore ~ log(Csize) + DimorphismIndex + Gouging + Nocturnal, data=data.f))$r.squared) # 1.1
-1/(1 - summary(lm(Nocturnal ~ log(Csize) + DimorphismIndex + Folivore + Gouging, data=data.f))$r.squared) # 1.47
-
-# males
-1/(1 - summary(lm(log(Csize) ~ DimorphismIndex + Gouging + Folivore + Nocturnal, data=data.m))$r.squared) # 2.16
-1/(1 - summary(lm(DimorphismIndex ~ log(Csize) + Gouging + Folivore + Nocturnal, data=data.m))$r.squared) # 1.72
-1/(1 - summary(lm(Gouging ~ log(Csize) + DimorphismIndex + Folivore + Nocturnal, data=data.m))$r.squared) # 1.09
-1/(1 - summary(lm(Folivore ~ log(Csize) + DimorphismIndex + Gouging + Nocturnal, data=data.m))$r.squared) # 1.12
-1/(1 - summary(lm(Nocturnal ~ log(Csize) + DimorphismIndex + Folivore + Gouging, data=data.m))$r.squared) # 1.46
-
-######################
-# HYPOTHESIS TESTING #
-######################
+####################
+# HYPOTHESIS TESTS #
+####################
 
 # single variables: females
 single.noc.f <- procD.pgls(coords ~ log(Csize) + Nocturnal, phy=phy, data=gdf.f) # 0.292
-single.folin.f <- procD.pgls(coords ~ log(Csize) + Folivore, phy=phy, data=gdf.f) # 0.036 *
+single.fol.f <- procD.pgls(coords ~ log(Csize) + Folivore, phy=phy, data=gdf.f) # 0.036 *
 single.gouge.f <- procD.pgls(coords ~ log(Csize) + Gouging, phy=phy, data=gdf.f) # 0.378
+single.gouge.f2 <- procD.pgls(coords ~ log(Csize) + Gouging2, phy=phy, data=gdf.f) # 0.552
 single.di.f <- procD.pgls(coords ~ log(Csize) + DimorphismIndex, phy=phy, data=gdf.f) # 0.001 **
 
 # single variables: males
 single.noc.m <- procD.pgls(coords ~ log(Csize) + Nocturnal, phy=phy, data=gdf.m) # 0.314
 single.fol.m <- procD.pgls(coords ~ log(Csize) + Folivore, phy=phy, data=gdf.m) # 0.039 *
 single.gouge.m <- procD.pgls(coords ~ log(Csize) + Gouging, phy=phy, data=gdf.m) # 0.746
+single.gouge.m2 <- procD.pgls(coords ~ log(Csize) + Gouging2, phy=phy, data=gdf.m) # 0.661
 single.di.m <- procD.pgls(coords ~ log(Csize) + DimorphismIndex, phy=phy, data=gdf.m) # 0.001 **
 
 # full model: females
@@ -167,46 +152,20 @@ multi.csize.f <- procD.pgls(coords ~ DimorphismIndex + Gouging + Folivore + Noct
 multi.noc.f <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Gouging + Folivore + Nocturnal, phy=phy, data=gdf.f) # p = 0.241
 multi.fol.f <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Gouging + Nocturnal + Folivore, phy=phy, data=gdf.f) # p = 0.068 .
 multi.gouge.f <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Folivore + Nocturnal + Gouging, phy=phy, data=gdf.f) # p = 0.268
+multi.gouge.f2 <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Folivore + Nocturnal + Gouging2, phy=phy, data=gdf.f) # p = 0.465
 multi.di.f <- procD.pgls(coords ~ log(Csize) + Gouging + Folivore + Nocturnal + DimorphismIndex, phy=phy, data=gdf.f) # p = 0.001 **
 
 # full model: males
 multi.csize.m <- procD.pgls(coords ~ DimorphismIndex + Gouging + Folivore + Nocturnal + log(Csize), phy=phy, data=gdf.m) # p = 0.089 .
 multi.noc.m <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Gouging + Folivore + Nocturnal, phy=phy, data=gdf.m) # p = 0.204
-multi.folin.m <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Gouging + Nocturnal + Folivore, phy=phy, data=gdf.m) # p = 0.055 .
+multi.fol.m <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Gouging + Nocturnal + Folivore, phy=phy, data=gdf.m) # p = 0.055 .
 multi.gouge.m <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Folivore + Nocturnal + Gouging, phy=phy, data=gdf.m) # p = 0.676
+multi.gouge.m2 <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Folivore + Nocturnal + Gouging2, phy=phy, data=gdf.m) # p = 0.687
 multi.di.m <- procD.pgls(coords ~ log(Csize) + Gouging + Folivore + Nocturnal + DimorphismIndex, phy=phy, data=gdf.m) # p = 0.001 **
 
-##############################################
-# NON-PHYLOGENETIC ANALYSIS FOR APPENDIX ??? #
-##############################################
-
-# single variables: females
-procD.lm(coords ~ log(Csize) + Nocturnal, data=gdf.f) # 0.001 **
-procD.lm(coords ~ log(Csize) + Folivore, data=gdf.f) # 0.014 *
-procD.lm(coords ~ log(Csize) + Gouging, data=gdf.f) # 0.198
-procD.lm(coords ~ log(Csize) + DimorphismIndex, data=gdf.f) # 0.001 **
-
-# single variables: males
-procD.lm(coords ~ log(Csize) + Nocturnal, data=gdf.m) # 0.001 **
-procD.lm(coords ~ log(Csize) + Folivore, data=gdf.m) # 0.012 *
-procD.lm(coords ~ log(Csize) + Gouging, data=gdf.m) # 0.298
-procD.lm(coords ~ log(Csize) + DimorphismIndex, data=gdf.m) # 0.001 **
-
-# full model: females
-procD.lm(coords ~ log(Csize) + DimorphismIndex + Gouging + Folivore + Nocturnal, data=gdf.f) # p = 0.026 *
-procD.lm(coords ~ log(Csize) + DimorphismIndex + Gouging + Nocturnal + Folivore, data=gdf.f) # p = 0.003 **
-procD.lm(coords ~ log(Csize) + DimorphismIndex + Folivore + Nocturnal + Gouging, data=gdf.f) # p = 0.098 .
-procD.lm(coords ~ log(Csize) + Gouging + Folivore + Nocturnal + DimorphismIndex, data=gdf.f) # p = 0.001 **
-
-# full model: males
-procD.lm(coords ~ log(Csize) + DimorphismIndex + Gouging + Folivore + Nocturnal, data=gdf.m) # p = 0.089 .
-procD.lm(coords ~ log(Csize) + DimorphismIndex + Gouging + Nocturnal + Folivore, data=gdf.m) # p = 0.002 **
-procD.lm(coords ~ log(Csize) + DimorphismIndex + Folivore + Nocturnal + Gouging, data=gdf.m) # p = 0.162
-procD.lm(coords ~ log(Csize) + Gouging + Folivore + Nocturnal + DimorphismIndex, data=gdf.m) # p = 0.001 **
-
-###############
-# BASIC PLOTS #
-###############
+############
+# 2D PLOTS #
+############
 
 # log centroid size vs log body mass
 CS_BM <- data.frame(LogCentroid = log(c(gpa.f$Csize, gpa.m$Csize)), 
@@ -247,12 +206,11 @@ ggplot(DI_BM, aes(x=LogBody, y=LogDi, fill=Clade, color=Clade)) +
 
 # phylogeny with ecological / behavioral data
 treefig.dat <- ddply(data, .(genus_species), function (x) {
-  temp <- x[1,c("Nocturnal","Folivore","Gouging")]
+  temp <- x[1,c("Nocturnal","Folivore","Gouging","Gouging2")]
   ifelse(temp == 0, "Absent", "Present")
 })
-names(treefig.dat) <- c("genus_species","Nocturnal","Folivore","Gouging")
 rownames(treefig.dat) <- sub("_"," ", treefig.dat$genus_species)
-treefig.dat <- treefig.dat[,2:4]
+treefig.dat <- treefig.dat[,2:5]
 tree2 <- tree
 tree2$tip.label <- sub("_"," ",tree2$tip.label)
 fig <- ggplot(tree2) + 
@@ -272,17 +230,15 @@ fig <- phylopic(fig, "0174801d-15a6-4668-bfe0-4c421fbe51e8", node=89) # hominoid
 fig + theme(legend.position=c(0.15,0.85), legend.text=element_text(size=13))
 
 # phylomorphospace
-# maybe also add fuctionality to modify the tip labels
-quartz()
 layout(matrix(1:2, 2, 1))
 plotGMPhyloMorphoSpace_axisflip(tree.f, gpa.f$coords, tip.text=gsub("_.*","",tree.f$tip.label), node.labels=F, plot.param=list(t.cex=0.3, n.cex=0.3, lwd=0.3, txt.cex=0.8))
 mtext("Females", line=1, cex=1.5)
 plotGMPhyloMorphoSpace_axisflip(tree.m, gpa.m$coords, tip.text=gsub("_.*","",tree.m$tip.label), node.labels=F, yaxis=-2, plot.param=list(t.cex=0.3, n.cex=0.3, lwd=0.3, txt.cex=0.8))
 mtext("Males", line=1, cex=1.5)
 
-##############
-# WIREFRAMES #
-##############
+######################
+# 3D WIREFRAME PLOTS #
+######################
 
 # load wireframe links
 wireframe <- read.csv("../Chapter_4/data/wireframe.csv", header=FALSE)
@@ -294,7 +250,7 @@ plot.coords(gpa.f$consensus, wireframe[,2:3], lines.col=lines.col, add=TRUE,
             legend=c("Mandible","Face","Braincase","Zygomatic","Basicranium"), legend.pos="topright", 
             legend.col=c("red","green","blue","purple","goldenrod"))
 plot.coords(gpa.m$consensus, wireframe[,2:3], lines.col=lines.col)
-snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 5 - Correlates of skull shape/Figures/Figure 5.5 - mean skull shape.png', fmt = 'png')
+snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Correlates of skull shape/Figures/Figure 5.5 - mean skull shape.png', fmt = 'png')
 
 # centroid size
 layout3d(matrix(1:4, 2, 2, byrow=TRUE), sharedMouse = TRUE)
@@ -302,7 +258,7 @@ plot.procD(multi.csize.f, wireframe[,2:3], value=log(min(gdf.f$Csize)))
 plot.procD(multi.csize.f, wireframe[,2:3], value=log(max(gdf.f$Csize)))
 plot.procD(multi.csize.m, wireframe[,2:3], value=log(min(gdf.m$Csize)))
 plot.procD(multi.csize.m, wireframe[,2:3], value=log(max(gdf.m$Csize)))
-snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 5 - Correlates of skull shape/Figures/Figure 5.6 - centroid size wireframes.png', fmt = 'png')
+snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Correlates of skull shape/Figures/Figure 5.6 - centroid size wireframes.png', fmt = 'png')
 
 # dimorphism 
 layout3d(matrix(1:4, 2, 2, byrow=TRUE), sharedMouse = TRUE)
@@ -310,7 +266,7 @@ plot.procD(multi.di.f, wireframe[,2:3], value=min(gdf.f$DimorphismIndex))
 plot.procD(multi.di.f, wireframe[,2:3], value=max(gdf.f$DimorphismIndex))
 plot.procD(multi.di.m, wireframe[,2:3], value=min(gdf.m$DimorphismIndex))
 plot.procD(multi.di.m, wireframe[,2:3], value=max(gdf.m$DimorphismIndex))
-snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 5 - Correlates of skull shape/Figures/Figure 5.7 - dimorphism wireframes.png', fmt = 'png')
+snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Correlates of skull shape/Figures/Figure 5.7 - dimorphism wireframes.png', fmt = 'png')
 
 # nocturnality 
 layout3d(matrix(1:2, 1, 2), sharedMouse = TRUE)
@@ -319,16 +275,16 @@ plot.procD(multi.noc.f, wireframe[,2:3], value=0, points.col="black", lines.col=
 plot.procD(multi.noc.f, wireframe[,2:3], value=1, points.col="skyblue", lines.col="skyblue", add=TRUE)
 plot.procD(multi.noc.m, wireframe[,2:3], value=0, points.col="black", lines.col="black")
 plot.procD(multi.noc.m, wireframe[,2:3], value=1, points.col="skyblue", lines.col="skyblue", add=TRUE)
-snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 5 - Correlates of skull shape/Figures/Figure 5.8 - nocturnality wireframes.png', fmt = 'png')
+snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Correlates of skull shape/Figures/Figure 5.8 - nocturnality wireframes.png', fmt = 'png')
 
-# folivory (inclusive)
+# folivory
 layout3d(matrix(1:2, 1, 2), sharedMouse = TRUE)
-plot.procD(multi.folin.f, wireframe[,2:3], value=0, points.col="black", lines.col="black", 
+plot.procD(multi.fol.f, wireframe[,2:3], value=0, points.col="black", lines.col="black", 
            legend=c("Non-folivorous","Folivorous"), legend.pos="topright", legend.col=c("black","palegreen"))
-plot.procD(multi.folin.f, wireframe[,2:3], value=1, points.col="palegreen", lines.col="palegreen", add=TRUE)
-plot.procD(multi.folin.m, wireframe[,2:3], value=0, points.col="black", lines.col="black")
-plot.procD(multi.folin.m, wireframe[,2:3], value=1, points.col="palegreen", lines.col="palegreen", add=TRUE)
-snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 5 - Correlates of skull shape/Figures/Figure 5.9 - folivory wireframes.png', fmt = 'png')
+plot.procD(multi.fol.f, wireframe[,2:3], value=1, points.col="palegreen", lines.col="palegreen", add=TRUE)
+plot.procD(multi.fol.m, wireframe[,2:3], value=0, points.col="black", lines.col="black")
+plot.procD(multi.fol.m, wireframe[,2:3], value=1, points.col="palegreen", lines.col="palegreen", add=TRUE)
+snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Correlates of skull shape/Figures/Figure 5.9 - folivory wireframes.png', fmt = 'png')
 
 # gouging 
 layout3d(matrix(1:2, 1, 2), sharedMouse = TRUE)
@@ -337,7 +293,16 @@ plot.procD(multi.gouge.f, wireframe[,2:3], value=0, points.col="black", lines.co
 plot.procD(multi.gouge.f, wireframe[,2:3], value=1, points.col="pink", lines.col="pink", add=TRUE)
 plot.procD(multi.gouge.m, wireframe[,2:3], value=0, points.col="black", lines.col="black")
 plot.procD(multi.gouge.m, wireframe[,2:3], value=1, points.col="pink", lines.col="pink", add=TRUE)
-snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 5 - Correlates of skull shape/Figures/Figure 5.10 - gouging wireframes.png', fmt = 'png')
+snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Correlates of skull shape/Figures/Figure 5.10 - gouging wireframes.png', fmt = 'png')
+
+# gouging2
+layout3d(matrix(1:2, 1, 2), sharedMouse = TRUE)
+plot.procD(multi.gouge.f2, wireframe[,2:3], value=0, points.col="black", lines.col="black", 
+           legend=c("Non-gouging","Gouging"), legend.pos="topright", legend.col=c("black","pink"))
+plot.procD(multi.gouge.f2, wireframe[,2:3], value=1, points.col="pink", lines.col="pink", add=TRUE)
+plot.procD(multi.gouge.m2, wireframe[,2:3], value=0, points.col="black", lines.col="black")
+plot.procD(multi.gouge.m2, wireframe[,2:3], value=1, points.col="pink", lines.col="pink", add=TRUE)
+snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Correlates of skull shape/Figures/Figure 5.10 - gouging2 wireframes.png', fmt = 'png')
 
 ########
 # END ##

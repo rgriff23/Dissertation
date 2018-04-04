@@ -1,4 +1,5 @@
-# Goswami modularity test
+# This function performs Goswami's modularity test on the results of Ward's cluster analysis
+# lcm = a landmark covariance matrix, k = the desired number of clusters
 Goswami_modularity_test <- function (lcm, k=6) {
   
   # make distance matrix from lcm

@@ -1,30 +1,21 @@
-
-#################
-# Preparations #
-###############
-
-# install packages
-	#install.packages("plyr")
-	#install.packages("ape")
-	#install.packages("ggplot2")
-	#source("https://bioconductor.org/biocLite.R")
-	#biocLite("ggtree")
-	#biocLite("EBImage")
+################
+# PREPARATIONS #
+################
 
 # load packages
-library(plyr)
-library(ape)
-library(ggplot2)
-library(ggtree)
-library(EBImage)
+library("plyr")
+library("ape")
+library("ggplot2")
+library("ggtree")
+library("EBImage")
 
 # read data and tree
-data <- read.csv("C:/GitHub/Dissertation/Chapter_2/data/table1.csv")
-tree <- read.nexus("C:/GitHub/Dissertation/Chapter_2/data/tree.nex")
+data <- read.csv("Chapter_2/data/table1.csv")
+tree <- read.nexus("Chapter_2/data/tree.nex")
 
-##################
-# Summary stats #
-################
+#################
+# SUMMARY STATS #
+#################
 
 # number of rows 
 nrow(data)
@@ -32,16 +23,9 @@ nrow(data)
 # number of known males/females
 table(data$Sex)
 
-# percent of target of extant males/females, not including unknowns or opposite sex for monomorphic spp 
-target <- 72
-round(table(data$Sex)[2]/target*100, 1) # males
-round(table(data$Sex)[1]/target*100, 1) # females
-
-# percent of target of extant males/females, including unknowns and opposite sex for monomorphic spp 
-sum(data$SexDat %in% c("M", "B")) # number of males
-sum(data$SexDat %in% c("F", "B")) # number of females
-round((sum(data$SexDat %in% c("M", "B"))/target)*100, 1) # proportion of males
-round((sum(data$SexDat %in% c("F", "B"))/target)*100, 1) # proportion of females
+# proportion of target sample size (N = 72) attained
+round((sum(data$SexDat %in% c("M", "B"))/72)*100, 1) # proportion of males
+round((sum(data$SexDat %in% c("F", "B"))/72)*100, 1) # proportion of females
 
 # scan sources
 table(data$Scan.source)
@@ -54,9 +38,9 @@ table(data$Scan.source)[2]/sum(table(data$Scan.source)[2:4]) # KUPRI
 table(data$Scan.source)[3]/sum(table(data$Scan.source)[2:4]) # smithsonian 3D collection
 table(data$Scan.source)[4]/sum(table(data$Scan.source)[2:4]) # morphosource
 
-###########
-# Figure #
-#########
+####################
+# PHYLOGENY FIGURE #
+####################
 
 # check that names all match up
 test <- paste(data$Genus, data$Species, sep="_")
@@ -64,10 +48,10 @@ test[!test %in% tree$tip.label]
 tree$tip.label[!tree$tip.label %in% test]
 rm(test)
 
-# Set tree labels to genus name only
+# set tree labels to genus name only
 tree$tip.label <- sapply(strsplit(tree$tip.label, "_"), "[[", 1)
 
-# Create table for heatmap
+# create table for heatmap
 tab <- ddply(data, .(Genus), function(x) {
   m <- ifelse("M" %in% x$SexDat | "B" %in% x$SexDat, 1, 0)
   f <- ifelse("F" %in% x$SexDat | "B" %in% x$SexDat, 1, 0)
@@ -98,5 +82,5 @@ fig <- phylopic(fig, "0174801d-15a6-4668-bfe0-4c421fbe51e8", node=89) # hominoid
 fig + theme(legend.position="none")
 
 ########
-# END #
-######
+# END ##
+########

@@ -1,3 +1,5 @@
+# This is a modified version of the plotGMPhyloMorphoSpace function from 'geomorph'
+#
 #' Plot phylogenetic tree and specimens in tangent space
 #'
 #' Function plots a phylogenetic tree and a set of Procrustes-aligned specimens in tangent space

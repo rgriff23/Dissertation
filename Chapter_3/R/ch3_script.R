@@ -1,41 +1,33 @@
-#################
-# Preparations #
-###############
+################
+# PREPARATIONS #
+################
 
 # load packages
-library(ggplot2)
-library(geomorph)
-library(scatterplot3d)
-library(abind)
-library(ggbiplot)
-library(gridExtra)
+library("ggplot2")
+library("geomorph")
+library("scatterplot3d")
+library("abind")
+library("ggbiplot")
+library("gridExtra")
 
-#########################
-# Import landmark data #
-#######################
-
-#windows
-#path <- "H:/Dropbox/Dissertation/Dissertation chapters/Chapter 3 - Jaw closing/Landmarks/"
-#mac
-path = "~/Dropbox/Dissertation/Dissertation chapters/Chapter 3 - Jaw closing/Landmarks/"
-
-# landmarks (2x10x10x10=60 files)
+# read landmark data
+path <- "Chapter 3 - Jaw closing/Landmarks/"
 files <- paste(path, list.files(path=path, pattern=".txt"), sep="")
 landmarks <- NULL
 for (i in 1:length(files)) {landmarks <- rbind(landmarks, as.matrix(read.table(files[i])))}
 landmarks <- arrayspecs(landmarks, 6, 3)
 
-# GPA and extract centroid sizes
-sizes <- gpagen(landmarks)$Csize
+# extract GPA coordinates and centroid sizes
 landmarks <- gpagen(landmarks)$coords
+sizes <- gpagen(landmarks)$Csize
 
 # subset to mouse and tamarin
 mouse <- landmarks[,,1:30]
 tamarin <- landmarks[,,31:60]
 
-###################################################################################
+##################################################################################
 # ANALYSIS 1: Compare variances of ground truth, 4-point, and 8-point alignments #
-#################################################################################
+##################################################################################
 
 # GPA landmarks for each specimen
 mou_abc <- gpagen(mouse)$coords
@@ -45,12 +37,12 @@ tam_abc <- gpagen(tamarin)$coords
 group30 <- factor(c(rep("ground truth",10),rep("4-point",10),rep("8-point",10)))
 
 # tests of homogenous variance (4-point, 8-point, ground truth)
-morphol.disparity(mou_abc ~ group30) # 1.687045e-04 1.631961e-04 7.249317e-05
-morphol.disparity(tam_abc ~ group30) # 2.686979e-04 1.850126e-04 9.252812e-05
+morphol.disparity(mou_abc ~ group30)
+morphol.disparity(tam_abc ~ group30)
 
-#############################################################################
+############################################################################
 # ANALYSIS 2: Compare distances of 4 and 8-point alignment to target shape #
-###########################################################################
+############################################################################
 
 # GPA for landmarks from n-point alignments
 tam_bc <- gpagen(tamarin[,,11:30])$coords
@@ -90,9 +82,9 @@ fig3 <- ggplot(boxdat, aes(specimen, dist, fill=Method)) +
   scale_fill_manual(values=c("red4","hotpink2"))
 fig3
 
-##############################################
+#############################################
 # ANALYSIS 3: Principal components analysis #
-############################################
+#############################################
 
 # pca
 tam_2d <- two.d.array(tam_abc)
@@ -166,7 +158,6 @@ lines3d(tam.min[c(1,3,5,1,2,4,6,2),], col="gold3", lwd=3)
 triangles3d(tam.min[c(1,3,5,2,4,6),],col="gold3")
 lines3d(tam.max[c(1,3,5,1,2,4,3,4,6,2,6,5),], col="hotpink2", lwd=3)
 #legend3d("topleft", legend=c("Target shape", "8-point alignment"), col=c("blue", "red4"), pch=16)
-snapshot3d(filename = 'H:/Dropbox/Dissertation/Dissertation chapters/Chapter 3 - Jaw closing/Figure 3.7.png', fmt = 'png')
 
 # biplot for PCA of all specimens
 all.group <- factor(c(rep("Microcebus, ground truth",10),
@@ -182,9 +173,9 @@ ggbiplot(all.pca, groups= all.group, ellipse=TRUE, var.axes=FALSE, alpha=0.5, sc
         legend.title = element_text(size=13),
         legend.text = element_text(size=10)) 
 
-###############################################
+##############################################
 # Analysis 4: Absolute vertical displacement #
-#############################################
+##############################################
 
 # absolute (mm) displacement of cranium and mandible under 8-point alignment relative to ground truth
 mou_molar_dist8 <- mean(dist[dist$Pair %in% c("1-2", "5-6") & dist$Specimen == "Microcebus murinus",][1:20,"Distance"]) -
@@ -218,7 +209,7 @@ tam_incisor_dist4
 mou_molar_dist4/31
 tam_molar_dist4/45
 
-# Distances between pairs of points in mm (1-2, 3-4, and 5-6 for each of the two specimens)
+# distances between pairs of points in mm (1-2, 3-4, and 5-6 for each of the two specimens)
 dist <- data.frame(
   Specimen=factor(c(rep(c("Microcebus murinus", "Saguinus fuscicollis"), each=90))),
   Method=factor(rep(rep(c("Ground truth","4-point","8-point"), each=30),2)),
@@ -245,5 +236,5 @@ ggplot(dist, aes(Pair, Distance, fill=Method)) +
   scale_fill_manual(values=c("red4","hotpink2","gold3","blue4","dodgerblue","purple"))
 
 ########
-# END #
-######
+# END ##
+########
