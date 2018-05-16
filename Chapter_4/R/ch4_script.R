@@ -129,9 +129,9 @@ procD.pgls(coords ~ log(Csize) + Gouging2*Folivore, phy=phy, data=gdf.m) # fails
 procD.pgls(coords ~ log(Csize) + Gouging*Nocturnal, phy=phy, data=gdf.m) # p = 0.864
 procD.pgls(coords ~ log(Csize) + Folivore*Nocturnal, phy=phy, data=gdf.m) # p = 0.437
 
-####################
-# HYPOTHESIS TESTS #
-####################
+##################################
+# HYPOTHESIS TESTS - ALL SPECIES #
+##################################
 
 # single variables: females
 single.noc.f <- procD.pgls(coords ~ log(Csize) + Nocturnal, phy=phy, data=gdf.f) # 0.292
@@ -162,6 +162,79 @@ multi.fol.m <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Gouging + Noct
 multi.gouge.m <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Folivore + Nocturnal + Gouging, phy=phy, data=gdf.m) # p = 0.676
 multi.gouge.m2 <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Folivore + Nocturnal + Gouging2, phy=phy, data=gdf.m) # p = 0.687
 multi.di.m <- procD.pgls(coords ~ log(Csize) + Gouging + Folivore + Nocturnal + DimorphismIndex, phy=phy, data=gdf.m) # p = 0.001 **
+
+#########################################
+# HYPOTHESIS TESTS - SUBSETS OF SPECIES #
+#########################################
+
+# effect of activity pattern below 75 mm skull length threshold (Kay & Cartmill 1977)
+# compute skull lengths for females and identify species to be included
+skull.lengths <- sqrt(colSums((landmarks.f["Glabella",,] - landmarks.f["Opisthocranium",,])^2))
+subset.f.75 <- subset.m.75 <- names(skull.lengths[skull.lengths < 75]) # 44 taxa 
+subset.m.75[subset.m.75 == "Cephalopachus_bancanus"] <- "Carlito_syrichta"
+# subset and align shape, subset data and tree, create geomorph dataframe
+gpa.f.75 <- gpagen(landmarks.f[,,subset.f.75])
+gpa.m.75 <- gpagen(landmarks.m[,,subset.m.75])
+data.f.75 <- filter(data.f, genus_species %in% subset.f.75)
+data.m.75 <- filter(data.m, genus_species %in% subset.m.75)
+tree.f.75 <- drop.tip(tree, tree$tip.label[!(tree$tip.label %in% subset.f.75)])
+tree.m.75 <- drop.tip(tree, tree$tip.label[!(tree$tip.label %in% subset.m.75)])
+# create geomorph object
+gdf.f.75 <- geomorph.data.frame(gpa.f.75, phy=tree.f.75, 
+                                PhysicalAlignment=data.f.75$PhysicalAlignment,
+                                BodyMass=data.f.75$BodyMass,
+                                DimorphismIndex=data.f.75$DimorphismIndex,
+                                Nocturnal=data.f.75$Nocturnal,
+                                Gouging=data.f.75$Gouging,
+                                Folivore=data.f.75$Folivore)
+gdf.m.75 <- geomorph.data.frame(gpa.m.75, phy=tree.m.75,
+                                PhysicalAlignment=data.m.75$PhysicalAlignment,
+                                BodyMass=data.m.75$BodyMass,
+                                DimorphismIndex=data.m.75$DimorphismIndex,
+                                Nocturnal=data.m.75$Nocturnal,
+                                Gouging=data.m.75$Gouging,
+                                Folivore=data.m.75$Folivore)
+# simple model
+single.noc.f75 <- procD.pgls(coords ~ log(Csize) + Nocturnal, phy=phy, data=gdf.f.75) # 0.212
+single.noc.m75 <- procD.pgls(coords ~ log(Csize) + Nocturnal, phy=phy, data=gdf.m.75) # 0.263
+# full model
+multi.noc.f75 <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Gouging + Folivore + Nocturnal, phy=phy, data=gdf.f.75) # p = 0.173
+multi.noc.m75 <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Gouging + Folivore + Nocturnal, phy=phy, data=gdf.m.75) # p = 0.139
+
+
+# effect of folivory above Kay's threshold (500 g) (Kay 1984)
+# subset to species >500 g
+subset.f.500 <- subset.m.500 <- unlist(filter(data.f, BodyMass > 0.5) %>% select(genus_species)) # 50 taxa
+subset.m.500 <- c(subset.f.500, "Rhinopithecus_roxellana") # 51 taxa
+# subset and align shape, subset data and tree, create geomorph dataframe
+gpa.f.500 <- gpagen(landmarks.f[,,subset.f.500])
+gpa.m.500 <- gpagen(landmarks.m[,,subset.m.500])
+data.f.500 <- filter(data.f, genus_species %in% subset.f.500)
+data.m.500 <- filter(data.m, genus_species %in% subset.m.500)
+tree.f.500 <- drop.tip(tree, tree$tip.label[!(tree$tip.label %in% subset.f.500)])
+tree.m.500 <- drop.tip(tree, tree$tip.label[!(tree$tip.label %in% subset.m.500)])
+# create geomorph object
+gdf.f.500 <- geomorph.data.frame(gpa.f.500, phy=tree.f.500, 
+                                PhysicalAlignment=data.f.500$PhysicalAlignment,
+                                BodyMass=data.f.500$BodyMass,
+                                DimorphismIndex=data.f.500$DimorphismIndex,
+                                Nocturnal=data.f.500$Nocturnal,
+                                Gouging=data.f.500$Gouging,
+                                Folivore=data.f.500$Folivore)
+gdf.m.500 <- geomorph.data.frame(gpa.m.500, phy=tree.m.500,
+                                PhysicalAlignment=data.m.500$PhysicalAlignment,
+                                BodyMass=data.m.500$BodyMass,
+                                DimorphismIndex=data.m.500$DimorphismIndex,
+                                Nocturnal=data.m.500$Nocturnal,
+                                Gouging=data.m.500$Gouging,
+                                Folivore=data.m.500$Folivore)
+# simple model
+single.fol.f500 <- procD.pgls(coords ~ log(Csize) + Folivore, phy=phy, data=gdf.f.500) # p = 0.043 *
+single.fol.m500 <- procD.pgls(coords ~ log(Csize) + Folivore, phy=phy, data=gdf.m.500) # p = 0.043 *
+# full model
+multi.fol.f500 <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Gouging + Nocturnal + Folivore, phy=phy, data=gdf.f.500) # p = 0.107
+multi.fol.m500 <- procD.pgls(coords ~ log(Csize) + DimorphismIndex + Gouging + Nocturnal + Folivore, phy=phy, data=gdf.m.500) # p = 0.039 *
+
 
 ############
 # 2D PLOTS #
@@ -241,7 +314,7 @@ mtext("Males", line=1, cex=1.5)
 ######################
 
 # load wireframe links
-wireframe <- read.csv("../Chapter_4/data/wireframe.csv", header=FALSE)
+wireframe <- read.csv("./Chapter_4/data/wireframe.csv", header=FALSE)
 lines.col <- mapvalues(wireframe[,1], unique(wireframe[,1]), c("red","green","blue","purple","goldenrod"))
 
 # mean shape
@@ -303,6 +376,22 @@ plot.procD(multi.gouge.f2, wireframe[,2:3], value=1, points.col="pink", lines.co
 plot.procD(multi.gouge.m2, wireframe[,2:3], value=0, points.col="black", lines.col="black")
 plot.procD(multi.gouge.m2, wireframe[,2:3], value=1, points.col="pink", lines.col="pink", add=TRUE)
 snapshot3d(filename = '~/Dropbox/Dissertation/Dissertation chapters/Chapter 4 - Correlates of skull shape/Figures/Figure 5.10 - gouging2 wireframes.png', fmt = 'png')
+
+# nocturnality in species <75 mm skull length
+layout3d(matrix(1:2, 1, 2), sharedMouse = TRUE)
+plot.procD(single.noc.f75, wireframe[,2:3], value=0, points.col="black", lines.col="black", 
+           legend=c("Non-nocturnal","Nocturnal"), legend.pos="topright", legend.col=c("black","skyblue"))
+plot.procD(single.noc.f75, wireframe[,2:3], value=1, points.col="skyblue", lines.col="skyblue", add=TRUE)
+plot.procD(single.noc.m75, wireframe[,2:3], value=0, points.col="black", lines.col="black")
+plot.procD(single.noc.m75, wireframe[,2:3], value=1, points.col="skyblue", lines.col="skyblue", add=TRUE)
+
+# folivory in species >500g body mass
+layout3d(matrix(1:2, 1, 2), sharedMouse = TRUE)
+plot.procD(single.fol.f500, wireframe[,2:3], value=0, points.col="black", lines.col="black", 
+           legend=c("Non-folivorous","Folivorous"), legend.pos="topright", legend.col=c("black","palegreen"))
+plot.procD(single.fol.f500, wireframe[,2:3], value=1, points.col="palegreen", lines.col="palegreen", add=TRUE)
+plot.procD(single.fol.m500, wireframe[,2:3], value=0, points.col="black", lines.col="black")
+plot.procD(single.fol.m500, wireframe[,2:3], value=1, points.col="palegreen", lines.col="palegreen", add=TRUE)
 
 ########
 # END ##
