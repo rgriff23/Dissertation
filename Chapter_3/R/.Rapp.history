@@ -29,33 +29,6 @@ length.ss.interval
 sample(x = c(lower.bound:upper.bound),#
        size = 1,#
        prob = c(rep(1/length.ss.interval, length.ss.interval)))
-sample(x = c(lower.bound:upper.bound),#
-       size = 1,#
-       prob = c(rep(1/length.ss.interval, length.ss.interval)))
-sample(x = c(lower.bound:upper.bound),#
-       size = 1,#
-       prob = c(rep(1/length.ss.interval, length.ss.interval)))
-sample(x = c(lower.bound:upper.bound),#
-       size = 1,#
-       prob = c(rep(1/length.ss.interval, length.ss.interval)))
-sample(x = c(lower.bound:upper.bound),#
-       size = 1,#
-       prob = c(rep(1/length.ss.interval, length.ss.interval)))
-sample(x = c(lower.bound:upper.bound),#
-       size = 1,#
-       prob = c(rep(1/length.ss.interval, length.ss.interval)))
-sample(x = c(lower.bound:upper.bound),#
-       size = 1,#
-       prob = c(rep(1/length.ss.interval, length.ss.interval)))
-sample(x = c(lower.bound:upper.bound),#
-       size = 1,#
-       prob = c(rep(1/length.ss.interval, length.ss.interval)))
-sample(x = c(lower.bound:upper.bound),#
-       size = 1,#
-       prob = c(rep(1/length.ss.interval, length.ss.interval)))
-sample(x = c(lower.bound:upper.bound),#
-       size = 1,#
-       prob = c(rep(1/length.ss.interval, length.ss.interval)))
 1/length.ss.interval
 length.ss.interval
 rep(1/length.ss.interval, length.ss.interval)

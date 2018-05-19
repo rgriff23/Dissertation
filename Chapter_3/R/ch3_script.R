@@ -11,7 +11,7 @@ library("ggbiplot")
 library("gridExtra")
 
 # read landmark data
-path <- "Chapter 3 - Jaw closing/Landmarks/"
+path <- "Chapter_3/data/"
 files <- paste(path, list.files(path=path, pattern=".txt"), sep="")
 landmarks <- NULL
 for (i in 1:length(files)) {landmarks <- rbind(landmarks, as.matrix(read.table(files[i])))}
