@@ -17,10 +17,6 @@ landmarks <- NULL
 for (i in 1:length(files)) {landmarks <- rbind(landmarks, as.matrix(read.table(files[i])))}
 landmarks <- arrayspecs(landmarks, 6, 3)
 
-# extract GPA coordinates and centroid sizes
-landmarks <- gpagen(landmarks)$coords
-sizes <- gpagen(landmarks)$Csize
-
 # subset to mouse and tamarin
 mouse <- landmarks[,,1:30]
 tamarin <- landmarks[,,31:60]
@@ -52,7 +48,7 @@ mou_bc <- gpagen(mouse[,,11:30])$coords
 tam_target <- gpagen(tamarin[,,1:10])$consensus
 mou_target <- gpagen(mouse[,,1:10])$consensus
 
-# compute Procrustes distances to target for tamarins (20)
+# compute Procrustes distances to target for each n-point alignment
 tam.dist <- mou.dist <- c()
 for (i in 1:20) {
   gpa1 <- gpagen(abind(tam_bc[,,i], tam_target, along=3))$coords
@@ -183,6 +179,16 @@ dist <- data.frame(
   Method=factor(rep(rep(c("Ground truth","4-point","8-point"), each=30),2)),
   Pair=factor(rep(c("1-2","3-4","5-6"), 60))
 )
+Distance <- c()
+landmarks_2d <- two.d.array(landmarks)
+for (i in 1:60) {
+  ABC <- c()
+  ABC[1] <- sqrt(sum((landmarks_2d[i,1:3] - landmarks_2d[i,4:6])^2))
+  ABC[2] <- sqrt(sum((landmarks_2d[i,7:9] - landmarks_2d[i,10:12])^2))
+  ABC[3] <- sqrt(sum((landmarks_2d[i,13:15] - landmarks_2d[i,16:18])^2))
+  Distance <- c(Distance, ABC)
+}
+dist$Distance <- Distance
 
 # absolute (mm) displacement of cranium and mandible under 8-point alignment relative to ground truth
 mou_molar_dist8 <- mean(dist[dist$Pair %in% c("1-2", "5-6") & dist$Specimen == "Microcebus murinus",][1:20,"Distance"]) -
@@ -193,12 +199,12 @@ mou_incisor_dist8 <- mean(dist[dist$Pair %in% c("3-4") & dist$Specimen == "Micro
   mean(dist[dist$Pair %in% c("3-4") & dist$Specimen == "Microcebus murinus",][21:30,"Distance"])
 tam_incisor_dist8 <- mean(dist[dist$Pair %in% c("3-4") & dist$Specimen == "Saguinus fuscicollis",][1:10,"Distance"]) -
   mean(dist[dist$Pair %in% c("3-4") & dist$Specimen == "Saguinus fuscicollis",][21:30,"Distance"])
-mou_molar_dist8
-tam_molar_dist8
-mou_incisor_dist8
-tam_incisor_dist8
-mou_molar_dist8/31
-tam_molar_dist8/45
+mou_molar_dist8 # 0.011 mm
+tam_molar_dist8 # 0.018 mm
+mou_incisor_dist8 # 0.002 mm
+tam_incisor_dist8 # 0.015 mm
+mou_molar_dist8/31 # 0.00035 = 0.04%
+tam_molar_dist8/45 # 0.0004 = 0.04%
 
 # absolute (mm) displacement of cranium and mandible under 4-point alignment relative to ground truth
 mou_molar_dist4 <- mean(dist[dist$Pair %in% c("1-2", "5-6") & dist$Specimen == "Microcebus murinus",][1:20,"Distance"]) -
@@ -209,24 +215,14 @@ mou_incisor_dist4 <- mean(dist[dist$Pair %in% c("3-4") & dist$Specimen == "Micro
   mean(dist[dist$Pair %in% c("3-4") & dist$Specimen == "Microcebus murinus",][11:20,"Distance"])
 tam_incisor_dist4 <- mean(dist[dist$Pair %in% c("3-4") & dist$Specimen == "Saguinus fuscicollis",][1:10,"Distance"]) -
   mean(dist[dist$Pair %in% c("3-4") & dist$Specimen == "Saguinus fuscicollis",][11:20,"Distance"])
-mou_molar_dist4
-tam_molar_dist4
-mou_incisor_dist4
-tam_incisor_dist4
-mou_molar_dist4/31
-tam_molar_dist4/45
+mou_molar_dist4 # 0.018 mm
+tam_molar_dist4 # 0.021 mm
+mou_incisor_dist4 # -0.01 mm
+tam_incisor_dist4 # 0.017 mm
+mou_molar_dist4/31 # 0.00056 = 0.06%
+tam_molar_dist4/45 # 0.00047 = 0.05%
 
 # plot distances
-Distance <- c()
-all_2d_mm <- all_2d*sizes
-for (i in 1:60) {
-  ABC <- c()
-  ABC[1] <- sqrt(sum((all_2d_mm[i,1:3] - all_2d_mm[i,4:6])^2))
-  ABC[2] <- sqrt(sum((all_2d_mm[i,7:9] - all_2d_mm[i,10:12])^2))
-  ABC[3] <- sqrt(sum((all_2d_mm[i,13:15] - all_2d_mm[i,16:18])^2))
-  Distance <- c(Distance, ABC)
-}
-dist$Distance <- Distance
 ggplot(dist, aes(Pair, Distance, fill=Method)) +
   geom_boxplot() +
   facet_grid( ~ Specimen) +
