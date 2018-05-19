@@ -177,6 +177,13 @@ ggbiplot(all.pca, groups= all.group, ellipse=TRUE, var.axes=FALSE, alpha=0.5, sc
 # Analysis 4: Absolute vertical displacement #
 ##############################################
 
+# distances between pairs of points in mm (1-2, 3-4, and 5-6 for each of the two specimens)
+dist <- data.frame(
+  Specimen=factor(c(rep(c("Microcebus murinus", "Saguinus fuscicollis"), each=90))),
+  Method=factor(rep(rep(c("Ground truth","4-point","8-point"), each=30),2)),
+  Pair=factor(rep(c("1-2","3-4","5-6"), 60))
+)
+
 # absolute (mm) displacement of cranium and mandible under 8-point alignment relative to ground truth
 mou_molar_dist8 <- mean(dist[dist$Pair %in% c("1-2", "5-6") & dist$Specimen == "Microcebus murinus",][1:20,"Distance"]) -
   mean(dist[dist$Pair %in% c("1-2", "5-6") & dist$Specimen == "Microcebus murinus",][41:60,"Distance"])
@@ -209,12 +216,7 @@ tam_incisor_dist4
 mou_molar_dist4/31
 tam_molar_dist4/45
 
-# distances between pairs of points in mm (1-2, 3-4, and 5-6 for each of the two specimens)
-dist <- data.frame(
-  Specimen=factor(c(rep(c("Microcebus murinus", "Saguinus fuscicollis"), each=90))),
-  Method=factor(rep(rep(c("Ground truth","4-point","8-point"), each=30),2)),
-  Pair=factor(rep(c("1-2","3-4","5-6"), 60))
-)
+# plot distances
 Distance <- c()
 all_2d_mm <- all_2d*sizes
 for (i in 1:60) {
